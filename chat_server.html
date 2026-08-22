@@ -1,0 +1,80 @@
+<div id="modal-chat" class="modal">
+    <link rel="stylesheet" href="chat_server.css">
+  <div class="modal-content chat-card">
+    <span class="close-btn" onclick="fermerModal()">&times;</span>
+    <h2>💬 Messagerie Réseau TCP (Multi-Clients)</h2>
+
+    <div class="chat-container">
+      <!-- Barre latérale clients connectés -->
+      <div class="chat-sidebar">
+        <h3>Membres en ligne</h3>
+        <ul id="users-list">
+          <li><span class="status-dot online"></span> Serveur Local (127.0.0.1)</li>
+          <li><span class="status-dot online"></span> Cheikh (Vous)</li>
+          <li><span class="status-dot online"></span> Alice_Client</li>
+          <li><span class="status-dot online"></span> Bob_Node</li>
+        </ul>
+      </div>
+
+      <!-- Zone centrale de discussion -->
+      <div class="chat-main">
+        <div id="chat-messages" class="chat-messages">
+          <div class="msg system">[SYSTEM] Connexion établie au serveur TCP sur le port 8888.</div>
+          <div class="msg other"><strong>Alice_Client:</strong> Salut tout le monde !</div>
+        </div>
+
+        <div class="chat-input-area">
+          <input type="text" id="chat-input" placeholder="Écrivez un message TCP..." onkeypress="traiterTouche(event)">
+          <button class="btn-primary" onclick="envoyerMessage()">Envoyer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+      <script>
+        function envoyerMessage() {
+  const input = document.getElementById('chat-input');
+  const message = input.value.trim();
+  const chatMessages = document.getElementById('chat-messages');
+
+  if (!message) return;
+
+  const heure = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  // Message de l'utilisateur
+  chatMessages.innerHTML += `
+    <div class="msg me">
+      <span class="time">${heure}</span>
+      <strong>Vous:</strong> ${echapperHTML(message)}
+    </div>
+  `;
+
+  input.value = '';
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  // Réponse simulée d'un autre client connecté
+  setTimeout(() => {
+    chatMessages.innerHTML += `
+      <div class="msg other">
+        <span class="time">${heure}</span>
+        <strong>Bob_Node:</strong> Paquet TCP reçu : "${echapperHTML(message)}"
+      </div>
+    `;
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }, 1200);
+}
+
+function traiterTouche(event) {
+  if (event.key === 'Enter') {
+    envoyerMessage();
+  }
+}
+
+function echapperHTML(str) {
+  return str.replace(/[&<>"']/g, function(m) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+  });
+}
+      </script>
+
+</div>
